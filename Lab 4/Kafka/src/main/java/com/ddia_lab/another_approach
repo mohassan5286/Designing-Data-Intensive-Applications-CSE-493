@@ -1,0 +1,23 @@
+			Properties config = new Properties();
+			config.put("client.id", InetAddress.getLocalHost().getHostName());
+			config.put("group.id", "group1");
+			config.put("bootstrap.servers", "localhost:9092");
+			config.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+			config.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+			List<String> topics = Arrays.asList("topic1");
+
+			KafkaConsumer<String, String> kvKafkaConsumer = new KafkaConsumer(config);
+
+			kvKafkaConsumer.subscribe(topics);
+
+			 Poll for new messages
+
+
+			while (true) {
+				ConsumerRecords<String, String> records = kvKafkaConsumer.poll(Long.MAX_VALUE);
+				records.forEach(record -> {
+					System.out.println("Topic: " + record.topic() + ", Received message: " + record.value());
+				});
+				kvKafkaConsumer.commitSync();
+			}
